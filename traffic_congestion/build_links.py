@@ -6,10 +6,12 @@
   python3 build_links.py                       # 여의도 주변 기본 키워드로 links.txt 생성
   python3 build_links.py --keywords 여의 올림픽 노들 마포대교
 """
+from pathlib import Path
+
 import argparse
 import csv
 
-from config import DATA_DIR
+from config import data_dir
 from seoul_api import SeoulApiError, fetch_all, fetch_page
 
 DEFAULT_KEYWORDS = ["여의", "올림픽대로", "노들로", "국회대로", "의사당", "마포대교", "원효대교", "서강대교"]
@@ -71,8 +73,7 @@ def main():
                 links.setdefault(row["link_id"], {"road_code": r["code"], "road_name": r["name"]})
     print(f"\n링크 {len(links)}개 확보, 링크정보 조회 중...")
 
-    DATA_DIR.mkdir(exist_ok=True)
-    out_csv = DATA_DIR / "links_selected.csv"
+    out_csv = data_dir(__file__) / "links_selected.csv"
     with out_csv.open("w", newline="", encoding="utf-8-sig") as f:
         w = csv.writer(f)
         w.writerow(["link_id", "road_name", "st_node_nm", "ed_node_nm", "map_dist", "reg_cd"])
@@ -86,10 +87,11 @@ def main():
             w.writerow([lid, info.get("road_name", meta["road_name"]), info.get("st_node_nm", ""),
                         info.get("ed_node_nm", ""), info.get("map_dist", ""), info.get("reg_cd", "")])
 
-    with open("links.txt", "w", encoding="utf-8") as f:
+    links_txt = Path(__file__).resolve().parent / "links.txt"
+    with links_txt.open("w", encoding="utf-8") as f:
         f.write(f"# build_links.py 생성 / 키워드: {' '.join(args.keywords)}\n")
         f.write("\n".join(links.keys()) + "\n")
-    print(f"저장: links.txt ({len(links)}개), {out_csv}")
+    print(f"저장: {links_txt} ({len(links)}개), {out_csv}")
 
 
 if __name__ == "__main__":

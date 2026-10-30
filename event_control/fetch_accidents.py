@@ -1,12 +1,13 @@
 """실시간 돌발정보(사고·공사·행사 통제 등)를 받아 CSV로 저장하고 유형별로 요약한다.
 
-사용: python3 fetch_accidents.py
+사용 (이 폴더 안에서): python3 fetch_accidents.py
 """
+
 import csv
 from collections import Counter
 from datetime import datetime
 
-from config import DATA_DIR, SERVICES
+from config import SERVICES, data_dir
 from seoul_api import fetch_all
 
 # 응답 필드명은 check_services.py 결과를 보고 필요하면 맞춰주세요
@@ -27,8 +28,7 @@ def main() -> None:
     if not rows:
         return
 
-    DATA_DIR.mkdir(exist_ok=True)
-    out = DATA_DIR / f"accidents_{datetime.now():%Y%m%d_%H%M}.csv"
+    out = data_dir(__file__) / f"accidents_{datetime.now():%Y%m%d_%H%M}.csv"
     fields = sorted({k for r in rows for k in r.keys()})
     with out.open("w", newline="", encoding="utf-8-sig") as f:
         writer = csv.DictWriter(f, fieldnames=fields)

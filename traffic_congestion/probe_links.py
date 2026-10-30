@@ -1,7 +1,8 @@
 """링크 목록을 얻기 위한 서비스명 후보를 시험한다.
 
-사용: python3 probe_links.py
+사용 (이 폴더 안에서): python3 probe_links.py
 """
+
 from config import SERVICES
 from seoul_api import SeoulApiError, fetch_page
 

@@ -1,6 +1,6 @@
 """links.txt에 적은 링크들의 실시간 속도를 주기적으로 수집해 CSV에 쌓는다.
 
-사용: python3 collect_traffic.py --interval 5
+사용 (이 폴더 안에서): python3 collect_traffic.py --interval 5
   - links.txt: 한 줄에 링크 ID 하나 (# 으로 시작하면 주석)
   - Ctrl+C로 종료
 """
@@ -10,7 +10,7 @@ import time
 from datetime import datetime
 from pathlib import Path
 
-from config import DATA_DIR, SERVICES
+from config import SERVICES, data_dir
 from seoul_api import SeoulApiError, fetch_page
 
 LINKS_FILE = Path(__file__).parent / "links.txt"
@@ -48,8 +48,7 @@ def main() -> None:
     args = ap.parse_args()
 
     links = load_links()
-    DATA_DIR.mkdir(exist_ok=True)
-    out = DATA_DIR / f"traffic_{datetime.now():%Y%m%d}.csv"
+    out = data_dir(__file__) / f"traffic_{datetime.now():%Y%m%d}.csv"
     new_file = not out.exists()
     print(f"링크 {len(links)}개, {args.interval}분 간격 → {out}")
 

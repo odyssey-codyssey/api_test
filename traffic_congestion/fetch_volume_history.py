@@ -7,11 +7,12 @@
   # 지점 목록만 보고 싶을 때
   python3 fetch_volume_history.py --list-spots --keyword 여의
 """
+
 import argparse
 import csv
 from collections import defaultdict
 
-from config import DATA_DIR, SERVICES
+from config import SERVICES, data_dir
 from seoul_api import SeoulApiError, fetch_all, fetch_page
 
 NAME_FIELDS = ["spot_nm", "SPOT_NM"]
@@ -85,8 +86,7 @@ def main() -> None:
 
     # 마라톤 날 vs 평소 평균 비교
     print("\n[요약] 마라톤 날 / 평소 평균")
-    DATA_DIR.mkdir(exist_ok=True)
-    out = DATA_DIR / f"volume_compare_{args.event}.csv"
+    out = data_dir(__file__) / f"volume_compare_{args.event}.csv"
     with out.open("w", newline="", encoding="utf-8-sig") as f:
         w = csv.writer(f)
         w.writerow(["spot_num", "spot_nm", "hour", "event_vol", "base_avg", "ratio"])
